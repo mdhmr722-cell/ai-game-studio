@@ -62,6 +62,7 @@ js/app.js              الهيكل، التوجيه، الرئيسية، الم
 js/ai.js               OMAR AI: توليد المشاريع + أوامر التعديل + المحادثة
 js/studios.js          Game Studio / App Studio / World Builder / التشغيل / التصدير
 js/engine2d.js         محرك تشغيل الألعاب على Canvas
+js/engine3d.js         محرك اللعب ثلاثي الأبعاد (three.js) بجودة HD/4K
 js/world3d.js          توليد العالم ثلاثي الأبعاد بـ three.js
 js/store.js            الحفظ المحلي للمشاريع والتقييمات والتعليقات
 js/i18n.js             العربية والإنجليزية واتجاه الصفحة
@@ -71,8 +72,10 @@ vendor/three.module.js محرك three.js مضمَّن داخل المشروع (�
 
 ### ملاحظات صريحة
 
-- اللعب في الألعاب يعمل على محرك 2D سريع متوافق مع كل الأجهزة، أما العوالم
-  ثلاثية الأبعاد فتُبنى وتُعرض في **World Builder** بمحرك three.js.
+- اللعب في الألعاب ثلاثي الأبعاد حقيقي بمحرك three.js: شخصية تمشي في عالم مُولَّد
+  (شوارع ومبانٍ وأشجار)، كاميرا تتبع وتدور بالسحب، قفز وإطلاق نار، وجمع نقاط وأعداء،
+  بجودة **Full HD** أو **4K Ultra HD** مع ضبط تلقائي حسب الجهاز. والألعاب 2D تعمل
+  بمحرك Canvas سريع، وWorld Builder يبني ويعرض العالم ثلاثي الأبعاد الكامل.
 - App Studio يولّد واجهات وشاشات تفاعلية ويصدّرها كموقع مستقل؛ ولا ينتج ملف
   `.ipa` أو `.apk` جاهزاً للمتجر، فالنشر في المتاجر يحتاج أدوات وحساب مطوّر خارجي.
 - النشر داخل المنصة والمشاركة مجانيان ولا يحتاجان خادماً؛ والمتاجر الخارجية قد تفرض
@@ -96,8 +99,9 @@ and **OMAR AI** turns it into a project you can edit, run, export and publish.
 - **OMAR AI** runs locally in the browser: it reads the idea (Arabic or English),
   picks the genre, dimensions, elements and palette, then generates the project
   spec, code and interfaces. No API key, no paid service.
-- **Game Studio** generates playable games (adventure, racing, war, open world,
-  simulation, horror, multiplayer rules) with a canvas runtime, keyboard and touch.
+- **Game Studio** generates playable games — real 3D gameplay with three.js
+  (character, follow camera, jumping, shooting, collectibles, enemies) at Full HD
+  or 4K quality, plus fast 2D canvas games — with keyboard and touch controls.
 - **App Studio** generates interactive app screens (store, education, social, AI,
   entertainment, utility) with phone/tablet/desktop preview and HTML export.
 - **World Builder** generates a real three.js scene — cities, streets, buildings,

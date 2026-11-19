@@ -249,7 +249,7 @@ function homeView() {
 
   const featured = [
     { route: 'game', icon: 'pad', title: { ar: 'Game Studio', en: 'Game Studio' },
-      body: { ar: 'ألعاب 2D و3D: مغامرات، سباقات، حروب، عالم مفتوح، محاكاة، رعب، ومتعددة اللاعبين.', en: '2D and 3D games: adventure, racing, war, open world, simulation, horror and multiplayer.' } },
+      body: { ar: 'ألعاب ثلاثية الأبعاد حقيقية (three.js) بجودة Full HD و4K — مغامرات، سباقات، حروب، عالم مفتوح، محاكاة، رعب — وألعاب 2D سريعة أيضاً.', en: 'Real 3D games (three.js) in Full HD and 4K — adventure, racing, war, open world, simulation, horror — plus fast 2D games.' } },
     { route: 'app', icon: 'phone', title: { ar: 'App Studio', en: 'App Studio' },
       body: { ar: 'تطبيقات iPhone وiPad وAndroid والكمبيوتر: متاجر، تعليم، تواصل، ذكاء اصطناعي وترفيه.', en: 'iPhone, iPad, Android and desktop apps: stores, education, social, AI and entertainment.' } },
     { route: 'world', icon: 'cube', title: { ar: 'World Builder', en: 'World Builder' },
@@ -274,8 +274,8 @@ function homeView() {
     '<h1 class="hero-title">AI <span>GAME STUDIO</span></h1>' +
     '<p class="hero-sub">' +
     L({
-      ar: 'منصة متكاملة لصناعة الألعاب والتطبيقات بالذكاء الاصطناعي. اكتب فكرتك فقط، ويتولى OMAR AI التصميم والأكواد والواجهات والعوالم والاختبار — ثم شغّل وانشر وشارك.',
-      en: 'A complete platform for making games and apps with AI. Write your idea, and OMAR AI takes care of the design, the code, the interfaces, the worlds and the testing — then run, publish and share.'
+      ar: 'منصة متكاملة لصناعة الألعاب والتطبيقات بالذكاء الاصطناعي. اكتب فكرتك فقط، ويتولى OMAR AI التصميم والأكواد والواجهات والعوالم والاختبار — ألعاب 3D حقيقية بجودة Full HD و4K — ثم شغّل وانشر وشارك مجاناً بالكامل.',
+      en: 'A complete platform for making games and apps with AI. Write your idea, and OMAR AI takes care of the design, the code, the interfaces, the worlds and the testing — real 3D games in Full HD and 4K — then run, publish and share, completely free.'
     }) +
     '</p>' +
     '<div class="hero-actions">' +

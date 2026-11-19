@@ -3,6 +3,7 @@
 import { L, lang } from './i18n.js';
 import { db } from './store.js';
 import { createGame } from './engine2d.js';
+import { createGame3D } from './engine3d.js';
 import { createWorld, loadThree } from './world3d.js';
 import { planProject, applyCommand } from './ai.js';
 import { toast, download, escapeHTML, slug, copyText } from './ui.js';
@@ -270,8 +271,8 @@ export function gameStudioView(id) {
     note.innerHTML =
       '<p class="hint">' +
       L({
-        ar: 'اللعب يجري على محرك OMAR AI السريع المتوافق مع الهواتف والكمبيوتر، والعالم ثلاثي الأبعاد الكامل (مدن، شوارع، مبانٍ، منازل، سيارات، طبيعة، بحار) تبنيه وتعدّله في World Builder.',
-        en: 'Gameplay runs on the fast OMAR AI runtime that works on phones and computers; the full 3D world (cities, streets, buildings, houses, cars, nature, seas) is built and edited in World Builder.'
+        ar: 'اللعب ثلاثي الأبعاد حقيقي (three.js): حرّك شخصيتك وأدر الكاميرا بالسحب، واقفز أو أطلق النار. اختر الجودة من الأعلى: Full HD أو 4K Ultra HD — وتُضبط تلقائياً حسب قدرة جهازك، والعالم نفسه تعدّله في World Builder.',
+        en: 'Real 3D gameplay (three.js): move your character, drag to orbit the camera, and jump or shoot. Pick Full HD or 4K Ultra HD from the top bar — it is also chosen automatically for your device, and the world itself is edited in World Builder.'
       }) +
       '</p>';
     main.appendChild(note);
@@ -317,17 +318,41 @@ export function gameStudioView(id) {
     }
   }
 
-  function mount() {
+  let mountToken = 0;
+
+  function destroyEngine() {
     if (engine) {
-      engine.destroy();
+      try {
+        engine.destroy();
+      } catch (err) {
+        /* not fatal */
+      }
       engine = null;
     }
+  }
+
+  function freshCanvas() {
+    const old = stage.querySelector('canvas.stage-canvas');
+    const canvas = document.createElement('canvas');
+    canvas.className = 'stage-canvas';
+    if (old && old.parentNode) old.parentNode.replaceChild(canvas, old);
+    else stage.insertBefore(canvas, stage.firstChild);
+    return canvas;
+  }
+
+  function mount() {
+    const token = ++mountToken;
+    destroyEngine();
     paused = false;
+
     const overlay = stage.querySelector('#game-over');
     if (overlay) overlay.classList.add('is-hidden');
-    const canvas = stage.querySelector('#game-canvas');
-    engine = createGame(canvas, project.spec, {
+
+    const canvas = freshCanvas();
+    const commonOpts = {
       dpr: dprFor(project.spec.quality),
+      shadows: true,
+      high: project.spec.quality === '4k',
       onState: function (state) {
         setText('#hud-score', String(state.score));
         setText('#hud-hp', String(state.hp));
@@ -338,9 +363,41 @@ export function gameStudioView(id) {
         showOver(info);
         if (project.id) db.play(project.id);
       }
-    });
+    };
+
+    const pauseLabel = { ar: 'إيقاف مؤقت', en: 'Pause' };
+
+    if (project.spec.dim === '3d') {
+      createGame3D(canvas, project.spec, commonOpts)
+        .then(function (instance) {
+          if (token !== mountToken) {
+            instance.destroy();
+            return;
+          }
+          engine = instance;
+          engine.start();
+          if (playBtn) playBtn.textContent = L(pauseLabel);
+        })
+        .catch(function () {
+          if (token !== mountToken) return;
+          const fallbackCanvas = freshCanvas();
+          engine = createGame(fallbackCanvas, project.spec, commonOpts);
+          engine.start();
+          if (playBtn) playBtn.textContent = L(pauseLabel);
+          toast(
+            L({
+              ar: 'تعذّر تشغيل 3D على هذا الجهاز — تم التشغيل بالمحرك السريع.',
+              en: '3D could not start on this device — running the fast engine instead.'
+            }),
+            'warn'
+          );
+        });
+      return;
+    }
+
+    engine = createGame(canvas, project.spec, commonOpts);
     engine.start();
-    if (playBtn) playBtn.textContent = L({ ar: 'إيقاف مؤقت', en: 'Pause' });
+    if (playBtn) playBtn.textContent = L(pauseLabel);
   }
 
   mount();
@@ -1024,15 +1081,49 @@ export function playView(param) {
   root.appendChild(bar);
   root.appendChild(stage);
 
-  const engine = createGame(stage.querySelector('#play-canvas'), spec, {
-    dpr: dprFor(spec.quality)
-  });
-  engine.start();
+  let engine = null;
+  let disposed = false;
 
-  bar.querySelector('#play-restart').addEventListener('click', () => engine.restart());
+  const playCanvas = stage.querySelector('#play-canvas');
+  const playOpts = {
+    dpr: dprFor(spec.quality),
+    shadows: true,
+    high: spec.quality === '4k'
+  };
+
+  if (spec.dim === '3d') {
+    createGame3D(playCanvas, spec, playOpts)
+      .then((instance) => {
+        if (disposed) {
+          instance.destroy();
+          return;
+        }
+        engine = instance;
+        engine.start();
+      })
+      .catch(() => {
+        if (disposed || !playCanvas.parentNode) return;
+        const fresh = document.createElement('canvas');
+        fresh.className = 'stage-canvas';
+        playCanvas.parentNode.replaceChild(fresh, playCanvas);
+        engine = createGame(fresh, spec, playOpts);
+        engine.start();
+      });
+  } else {
+    engine = createGame(playCanvas, spec, playOpts);
+    engine.start();
+  }
+
+  bar.querySelector('#play-restart').addEventListener('click', () => {
+    if (engine) engine.restart();
+  });
 
   root.__cleanup = function () {
-    engine.destroy();
+    disposed = true;
+    if (engine) {
+      engine.destroy();
+      engine = null;
+    }
   };
 
   return root;
@@ -1068,6 +1159,19 @@ export function exportProjectJSON(project) {
 
 export async function exportGameHTML(project) {
   if (!project || !project.spec) return;
+
+  if (project.spec.dim === '3d') {
+    exportProjectJSON(project);
+    toast(
+      L({
+        ar: 'لعبة 3D: تم تصدير ملف المشروع (JSON). شغّلها من الاستوديو أو من زر Run.',
+        en: '3D game: the project file (JSON) was exported. Play it from the studio or with Run.'
+      }),
+      'warn'
+    );
+    return;
+  }
+
   let engineSrc = '';
   try {
     const res = await fetch('js/engine2d.js');

@@ -1667,3 +1667,81 @@ html[dir="rtl"] select {
     transition-duration: 0.001s !important;
   }
 }
+
+
+/* ---------- 3D touch controls (joystick + action) ---------- */
+
+.stage {
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.joy {
+  position: absolute;
+  inset-block-end: 20px;
+  inset-inline-start: 18px;
+  width: 108px;
+  height: 108px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.28);
+  background: radial-gradient(circle, rgba(124, 92, 255, 0.24), rgba(6, 8, 16, 0.55) 72%);
+  touch-action: none;
+  z-index: 6;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+.joy-knob {
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline-start: 50%;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  background: linear-gradient(140deg, var(--accent), var(--accent-2));
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+  pointer-events: none;
+}
+
+.act-btn {
+  position: absolute;
+  inset-block-end: 32px;
+  inset-inline-end: 20px;
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.32);
+  background: rgba(124, 92, 255, 0.36);
+  color: #fff;
+  font-size: 26px;
+  font-weight: 800;
+  display: grid;
+  place-items: center;
+  touch-action: none;
+  z-index: 6;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+.act-btn:active {
+  transform: scale(0.94);
+}
+
+@media (max-width: 980px) {
+  .joy {
+    width: 96px;
+    height: 96px;
+  }
+
+  .joy-knob {
+    width: 40px;
+    height: 40px;
+  }
+
+  .act-btn {
+    width: 68px;
+    height: 68px;
+    font-size: 22px;
+  }
+}
