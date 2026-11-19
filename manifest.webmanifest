@@ -1,0 +1,28 @@
+{
+  "name": "AI GAME STUDIO",
+  "short_name": "AI GAME",
+  "description": "منصة مجانية بالكامل لصناعة الألعاب والتطبيقات بالذكاء الاصطناعي — Developed by OMAR NAJMI, Powered by OMAR AI",
+  "start_url": ".",
+  "scope": ".",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#080a12",
+  "theme_color": "#080a12",
+  "lang": "ar",
+  "dir": "rtl",
+  "categories": ["games", "productivity", "developer"],
+  "icons": [
+    {
+      "src": "favicon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
